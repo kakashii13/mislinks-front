@@ -49,8 +49,10 @@ export const Login = () => {
         placeholder="Username"
         value={username}
         onChange={({ target }) => handleUsername(target)}
+        id="inputusername"
       />
       <Input
+        id="inputpassword"
         placeholder="Password"
         type="password"
         value={password}

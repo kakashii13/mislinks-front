@@ -1,25 +1,35 @@
 import { Text, Link, Heading, Stack, Button, Icon } from "@chakra-ui/react";
 import React from "react";
-import { IoCloseOutline } from "react-icons/io5";
+import { AiOutlineStar, AiFillStar, AiOutlineDelete } from "react-icons/ai";
 
 export const MiLink = ({ link, removeLink }) => {
   return (
     <Stack
       borderRadius="4px"
-      width="300px"
+      maxWidth="300px"
+      height="auto"
       background="whiteAlpha.100"
-      position="relative"
+      // overflow="hidden"
     >
-      <Stack padding="20px">
+      <Stack padding="20px" position="relative">
         <Heading as="h2" fontSize="17px" textTransform="capitalize">
           {link?.title}
         </Heading>
         <Link href={link?.url} isExternal color="blue.200">
           {link?.url}
         </Link>
-        <Text color="whiteAlpha.700">{link?.description}</Text>
+        <Text
+          color="whiteAlpha.700"
+          // whiteSpace="nowrap"
+          // overflow="hidden"
+          // textOverflow="ellipsis"
+        >
+          {link?.description}
+        </Text>
+        <Text>{link?.category}</Text>
         <Icon
-          as={IoCloseOutline}
+          as={AiOutlineDelete}
+          color="red.500"
           position="absolute"
           right="5px"
           top="0px"

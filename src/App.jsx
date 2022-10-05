@@ -20,6 +20,7 @@ function App() {
               }
             />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<p>Not found</p>} />
           </Routes>
         </BrowserRouter>
       </ContextProvider>
