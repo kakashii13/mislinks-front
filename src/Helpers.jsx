@@ -1,7 +1,1 @@
-export const INITAL_CATEGORIES = [
-  "All",
-  "Programming",
-  "Sports",
-  "Books",
-  "Others",
-];
+export const INITIAL_CATEGORIES = ["Programming", "Sports", "Books", "Others"];

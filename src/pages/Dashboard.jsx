@@ -1,23 +1,18 @@
-import {
-  Button,
-  Heading,
-  Select,
-  SimpleGrid,
-  Stack,
-  VStack,
-} from "@chakra-ui/react";
+import { Heading, Select, SimpleGrid, Stack, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FavLinks } from "../components/FavLinks";
 import { MiLink } from "../components/Link";
 import { LinkForm } from "../components/LinkForm";
+import { NavBar } from "../components/NavBar";
 import { Search } from "../components/Search";
 import { Toggable } from "../components/Toggable";
-import { INITAL_CATEGORIES } from "../Helpers";
-import { create, getAll, remove } from "../service/links";
+import { INITIAL_CATEGORIES } from "../Helpers";
+import { create, getAll, remove, update } from "../service/links";
 
 export const Dashboard = () => {
   const [links, setLinks] = useState([]);
-  const [linksFilter, setLinksFilter] = useState([]);
+  const [linksToShow, setLinksToShow] = useState([]);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
@@ -29,9 +24,11 @@ export const Dashboard = () => {
     const getLinks = async () => {
       const links = await getAll();
       setLinks(links);
+      setLinksToShow(links);
+      console.log(links);
     };
     getLinks();
-  }, [links]);
+  }, []);
 
   const handleTitle = (target) => {
     setTitle(target.value);
@@ -57,15 +54,25 @@ export const Dashboard = () => {
     };
     const link = await create(newLink);
     setLinks(links.concat(link));
+    setLinksToShow(linksToShow.concat(link));
   };
 
   const removeLink = async (id) => {
     await remove(id);
-    const linksFilter = links.filter((l) => l.id !== id);
-    setLinks(linksFilter);
+    const linksFilter = linksToShow.filter((l) => l.id !== id);
+    // setLinks(linksFilter);
+    console.log(linksFilter);
+    setLinksToShow(linksFilter);
   };
 
-  const favLink = async (id) => {};
+  const favLink = async (id) => {
+    const link = links.filter((link) => link.id === id);
+    link[0].fav = !link[0].fav;
+    const updatedLink = await update(id, link[0]);
+    const linksFilter = linksToShow.filter((l) => l.id !== id);
+    setLinks(linksFilter.concat(updatedLink));
+    setLinksToShow(linksFilter.concat(updatedLink));
+  };
 
   const logout = () => {
     localStorage.removeItem("mislinksuser");
@@ -73,19 +80,19 @@ export const Dashboard = () => {
   };
 
   const filterCategory = (target) => {
-    const linksFilter = links.filter(
-      (l) => l.category?.toLowerCase() === target.value.toLowerCase()
-    );
-    setLinksFilter(linksFilter);
+    if (target.value == "") {
+      setLinksToShow(links);
+    } else {
+      const filter = links.filter(
+        (l) => l.category?.toLowerCase() === target.value.toLowerCase()
+      );
+      setLinksToShow(filter);
+    }
   };
 
-  const linksToShow = !linksFilter.length ? links : linksFilter;
   return (
     <VStack className="App">
-      <Button onClick={logout} colorScheme="purple">
-        Log out
-      </Button>
-      <Heading>Mis links</Heading>
+      <NavBar logout={logout} />
       <Toggable addLink={addLink}>
         <LinkForm
           handleTitle={handleTitle}
@@ -98,22 +105,38 @@ export const Dashboard = () => {
         />
       </Toggable>
       <Search />
+      <FavLinks links={links} />
       <Stack pt="30px" width="100%">
         <Heading>Links</Heading>
         <Stack width="150px">
-          <Select onChange={({ target }) => filterCategory(target)}>
-            {INITAL_CATEGORIES.map((cat) => (
+          <Select
+            onChange={({ target }) => filterCategory(target)}
+            zIndex="10"
+            placeholder="All"
+          >
+            {INITIAL_CATEGORIES.map((cat) => (
               <option value={cat} key={cat}>
                 {cat}
               </option>
             ))}
           </Select>
         </Stack>
-        <SimpleGrid minChildWidth="100px" spacing={"10px"}>
-          {linksToShow.map((link) => (
-            <MiLink key={link.id} link={link} removeLink={removeLink} />
-          ))}
-        </SimpleGrid>
+        <Stack>
+          {!linksToShow.length ? (
+            <p>No data to display</p>
+          ) : (
+            <SimpleGrid minChildWidth="100px" spacing={"10px"}>
+              {linksToShow.map((link) => (
+                <MiLink
+                  key={link.id}
+                  link={link}
+                  removeLink={removeLink}
+                  favLink={favLink}
+                />
+              ))}
+            </SimpleGrid>
+          )}
+        </Stack>
       </Stack>
     </VStack>
   );

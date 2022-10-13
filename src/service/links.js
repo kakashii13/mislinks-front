@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const baseUrl = import.meta.env.VITE_BACKEND_LINK;
-const baseUrl = "/api/links";
+const baseUrl = import.meta.env.VITE_BACKEND_LINK;
+// const baseUrl = "/api/links";
 let token = undefined;
 
 export const setToken = (newToken) => {
@@ -19,6 +19,15 @@ export const create = async (newObj) => {
   };
 
   const res = await axios.post(baseUrl, newObj, config);
+  return res.data;
+};
+
+export const update = async (id, newObj) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
+  const res = await axios.put(`${baseUrl}/${id}`, newObj, config);
   return res.data;
 };
 

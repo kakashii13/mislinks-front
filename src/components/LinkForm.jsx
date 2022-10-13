@@ -1,6 +1,6 @@
 import { FormControl, Input, Select } from "@chakra-ui/react";
 import React from "react";
-import { INITAL_CATEGORIES } from "../Helpers";
+import { INITIAL_CATEGORIES } from "../Helpers";
 
 export const LinkForm = ({
   handleTitle,
@@ -37,7 +37,7 @@ export const LinkForm = ({
         placeholder="Category"
         onChange={({ target }) => handleCategory(target)}
       >
-        {INITAL_CATEGORIES.map((cat) => (
+        {INITIAL_CATEGORIES.map((cat) => (
           <option value={cat} key={cat}>
             {cat}
           </option>
